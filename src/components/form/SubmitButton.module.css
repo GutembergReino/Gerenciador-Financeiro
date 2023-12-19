@@ -1,0 +1,19 @@
+.btn {
+  /* position */
+  margin: 1em 3em;
+  padding: 0.5em 3em;
+  /* text */
+  text-decoration: none;
+  /* border */
+  border: none;
+  /* color */
+  background-color: black;
+  color: #fff;
+  /* misc */
+  cursor: pointer;
+  transition: color 0.5s;
+}
+.btn:hover {
+  /* color */
+  color: var(--Y);
+}

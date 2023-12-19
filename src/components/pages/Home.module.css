@@ -1,0 +1,38 @@
+.home_container {
+  /* size */
+  width: 100%;
+  /* position */
+  padding-bottom: 15em;
+  /* display */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.home_container h1 {
+  /* position */
+  margin-bottom: 0.5em;
+  /* text */
+  font-size: 2.5em;
+}
+.home_container h1 span {
+  /* position */
+  padding: 0 0.2em;
+  /* text */
+  font-size: 1em;
+  /* color */
+  background-color: darkcyan;
+  color: var(--Y);
+}
+.home_container p {
+  /* position */
+  margin-bottom: 1.5em;
+  /* color */
+  color: black;
+}
+.home_container img {
+  /* size */
+  width: 350px;
+  /* position */
+  margin: 2em;
+}

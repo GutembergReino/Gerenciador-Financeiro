@@ -1,0 +1,20 @@
+.btn {
+  /* size */
+  height: fit-content;
+  /* position */
+  padding: 0.5em 3em;
+  margin-top: 10em;
+  /* text */
+  text-decoration: none;
+  /* color */
+  background-color: darkcyan;
+  color: #fff;
+  /* misc */
+  transition: color 0.5s;
+  transition: padding 0.1s;
+  border-radius: 10px;
+}
+.btn:hover {
+  /* color */
+  color: var(--Y);
+}

@@ -1,0 +1,12 @@
+.project_container {
+  /* position */
+  padding: 1em;
+}
+
+.title_container {
+  /* position */
+  margin: 2em;
+  /* display */
+  display: flex;
+  justify-content: space-between;
+}
