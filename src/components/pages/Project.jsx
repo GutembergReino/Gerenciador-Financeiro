@@ -1,15 +1,12 @@
 import { v4 } from "uuid";
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
 import Container from "../layout/Container";
 import Loader from "../layout/Loader";
 import Message from "../layout/Message";
 import ProjectForm from "../project/ProjectForm";
 import ServiceForm from "../service/ServiceForm";
 import ServiceCard from "../service/ServiceCard";
-
 import styles from "./Project.module.css";
 import Navbar from "../layout/Navbar";
 
@@ -17,34 +14,30 @@ export default function Project() {
   const [message, setMessage] = useState();
   const [messageType, setMessageType] = useState();
 
-
   const { id } = useParams();
-  const [project, setProject] = useState([]);
+  const [project, setProject] = useState({});
   const [services, setServices] = useState([]);
-  useEffect(() => {
-    setTimeout(() => {
-      fetch(`http://localhost:5000/projects/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((resp) => resp.json())
-        .then((data) => {
-          setProject(data);
-          setServices(data.services);
-        })
-        .catch((err) => console.error(err));
-    }, 300);
-  }, [id]);
 
+  useEffect(() => {
+    fetch(`http://localhost:5000/projects/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        setProject(data);
+        setServices(data.services || []); // Certifique-se de tratar o caso em que services é undefined
+      })
+      .catch((err) => console.error(err));
+  }, [id]);
 
   const [showProjectForm, setShowProjectForm] = useState(false);
   function toggleProjectForm() {
     setShowProjectForm(!showProjectForm);
   }
 
- 
   const [showServiceForm, setShowServiceForm] = useState(false);
   function toggleServiceForm() {
     setShowServiceForm(!showServiceForm);
@@ -53,19 +46,21 @@ export default function Project() {
   function createService(project) {
     setMessage("");
 
-    const lastService = project.services.at(-1);
-    lastService.id = v4();
+    const lastService = project.services?.at(-1); // Trate o caso em que services é undefined
+    if (lastService) {
+      lastService.id = v4();
 
-    const newCost = parseFloat(project.cost) + parseFloat(lastService.cost);
+      const newCost = parseFloat(project.cost || 0) + parseFloat(lastService.cost || 0);
 
-    if (newCost > parseFloat(project.budget)) {
-      setMessage("Acima do orçamento, verifique o custo do serviço!");
-      setMessageType("error");
-      project.services.pop();
-      return false;
+      if (newCost > parseFloat(project.budget || 0)) {
+        setMessage("Acima do orçamento, verifique o custo do serviço!");
+        setMessageType("error");
+        project.services.pop();
+        return false;
+      }
+
+      project.cost = newCost;
     }
-
-    project.cost = newCost;
 
     fetch(`http://localhost:5000/projects/${project.id}`, {
       method: "PATCH",
@@ -83,17 +78,13 @@ export default function Project() {
       .catch((err) => console.error(err));
   }
 
-
   function removeService(id, cost) {
     setMessage("");
 
-    const servicesUpdate = project.services.filter(
-      (service) => service.id !== id
-    );
+    const servicesUpdate = project.services?.filter((service) => service.id !== id) || [];
 
-    const projectUpdated = project;
-    projectUpdated.services = servicesUpdate;
-    projectUpdated.cost = parseFloat(projectUpdated.cost) - parseFloat(cost);
+    const projectUpdated = { ...project, services: servicesUpdate };
+    projectUpdated.cost = parseFloat(projectUpdated.cost || 0) - parseFloat(cost || 0);
 
     fetch(`http://localhost:5000/projects/${projectUpdated.id}`, {
       method: "PATCH",
@@ -112,18 +103,17 @@ export default function Project() {
       .catch((err) => console.error(err));
   }
 
-
   function editProject(project) {
     setMessage("");
-
 
     if (project.budget < project.cost) {
       setMessage("Orçamento insuficiente!");
       setMessageType("error");
       return false;
     }
+
     fetch(`http://localhost:5000/projects/${project.id}`, {
-      method: "PATCH", 
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -144,7 +134,7 @@ export default function Project() {
 
   return (
     <div>
-      <Navbar />  
+      <Navbar />
       {project.name ? (
         <div className={styles.project_details}>
           <Container customClass="column">
@@ -155,29 +145,27 @@ export default function Project() {
                 {!showProjectForm ? "Editar projeto" : "Fechar"}
               </button>
               {!showProjectForm ? (
-                // PROJECT DETAILS
                 <div className={styles.project_info}>
                   <p>
                     <span>Categoria: </span>
-                    {project.category.name}
+                    {project.category?.name}
                   </p>
                   <p>
                     <span>Valor: </span>
-                    {Number(project.budget).toLocaleString("pt-BR", {
+                    {Number(project.budget || 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </p>
                   <p>
                     <span>Custos: </span>
-                    {Number(project.cost).toLocaleString("pt-BR", {
+                    {Number(project.cost || 0).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",
                     })}
                   </p>
                 </div>
               ) : (
-                // PROJECT EDIT FORM
                 <div className={styles.project_info}>
                   <ProjectForm
                     handleSubmit={editProject}
@@ -215,9 +203,7 @@ export default function Project() {
                     key={service.id}
                   />
                 ))}
-              {services.length === 0 && (
-                <p>Não há serviços cadastrados.</p>
-              )}
+              {services.length === 0 && <p>Não há serviços cadastrados.</p>}
             </Container>
           </Container>
         </div>

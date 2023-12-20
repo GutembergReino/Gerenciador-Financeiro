@@ -1,19 +1,38 @@
-// react
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { BsPencil, BsFillTrashFill } from "react-icons/bs";
+import Loading from "../layout/Loader";
 
-// css
 import styles from "./ProjectCard.module.css";
 
 function ProjectCard({ project, handleRemove }) {
-  
+  const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (project && project.category_id) {
+      fetch(`http://localhost:5000/categories/${project.category_id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setCategoryName(data.name);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Erro ao obter o nome da categoria:", error);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [project]);
+
   if (!project) {
-    console.error('Dados do projeto inválidos:', project);
-    return <div>Dados do projeto inválidos</div>; 
+    console.error("Dados do projeto inválidos:", project);
+    return <div>Dados do projeto inválidos</div>;
   }
 
-  const { id, name, budget, category_id } = project;
+  const { id, name, budget } = project;
 
   return (
     <div className={styles.project_card}>
@@ -27,9 +46,14 @@ function ProjectCard({ project, handleRemove }) {
       </p>
       <p className={styles.category_text}>
         <span
-          className={`${styles[category_id ? category_id.toString().toLowerCase() : 'default']}`}
+          className={`${styles[categoryName
+            ? categoryName.toLowerCase()
+            : "default"]}`}
         ></span>{" "}
-        {category_id ? `Categoria ${category_id}` : 'Categoria não disponível'}
+        {categoryName
+          ? `Categoria ${categoryName}`
+          : "Categoria não disponível"}
+        {loading && <Loading />}
       </p>
       <div className={styles.project_card_actions}>
         <Link to={`/project/${id}`}>

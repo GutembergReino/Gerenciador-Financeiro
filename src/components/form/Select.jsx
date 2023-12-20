@@ -11,7 +11,7 @@ export default function Select({ text, name, options, handleOnChange, value }) {
       <select name={name} id={name} onChange={handleOnChange} value={value}>
         <option>Escolha uma opção</option>
         {options.map((option) => (
-          <option id={option.id} key={option.id}>
+          <option value={option.id} key={option.id}>
             {option.name}
           </option>
         ))}
@@ -25,7 +25,7 @@ Select.propTypes = {
   name: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.object).isRequired,
   handleOnChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Permitindo string ou número
 };
 
 Select.defaultProps = {

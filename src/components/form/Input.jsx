@@ -29,16 +29,13 @@ export default function Input({
 }
 
 Input.propTypes = {
-  type: PropTypes.string,
-  text: PropTypes.string,
+  type: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  id: PropTypes.string,
-  placeholder: PropTypes.string,
-  handleOnChange: PropTypes.func,
-  value: PropTypes.string,
+  handleOnChange: PropTypes.func.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Permitindo string ou número
 };
 
 Input.defaultProps = {
-  type: "text",
   value: "",
 };
