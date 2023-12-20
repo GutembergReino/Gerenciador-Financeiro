@@ -1,7 +1,5 @@
 // react
 import PropTypes from "prop-types";
-
-
 // css
 import styles from "../project/ProjectCard.module.css";
 import { BsPencil, BsFillTrashFill } from "react-icons/bs";

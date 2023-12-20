@@ -9,9 +9,8 @@ function Sign() {
   const [formType, setFormType] = useState('signin');
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    confirmPassword: '',
-  });
+    senha: '',
+  }); // Remova o campo 'confirmPassword'
 
   const navigate = useNavigate();
 
@@ -26,21 +25,45 @@ function Sign() {
 
   const handleSubmit = async event => {
     event.preventDefault();
-
+  
     try {
       if (formType === 'signin') {
-        const response = await axios.get(`http://localhost:5000/users?email=${formData.email}&password=${formData.password}`);
+        const response = await axios.get('http://localhost:5000/users', {
+          params: {
+            email: formData.email,
+            senha: formData.senha,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
         if (response.status === 200) {
-          console.log('Login bem-sucedido');
-          navigate('/home');
+          const userData = response.data;
+  
+          if (Array.isArray(userData) && userData.length > 0) {
+            // Email ou senha incorretos, notificar o usuário
+            alert('Email ou senha incorretos. Por favor, tente novamente.');
+          } else {
+            console.log('Login bem-sucedido');
+            navigate('/home');
+          }
         } else {
           console.log('Login falhou');
           console.log(response);
+  
+          // Outro erro, notificar o usuário de forma genérica
+          alert('Ocorreu um erro durante o login. Por favor, tente novamente mais tarde.');
         }
       } else if (formType === 'signup') {
-        const response = await axios.post('http://localhost:5000/signup', formData);
-
-        if (response.status === 201) {
+        // Enviar dados dinâmicos do formulário
+        const response = await axios.post('http://localhost:5000/users', formData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (response.status === 200) {
           console.log('Registro bem-sucedido');
           navigate('/home');
         } else {
@@ -49,8 +72,9 @@ function Sign() {
         }
       }
     } catch (error) {
+      alert('Ocorreu um erro durante o login. Por favor, tente novamente mais tarde.');
       console.error('Erro durante o processamento:', error);
-      console.error(error.response); 
+      console.error(error.response);
     }
   };
 
@@ -81,9 +105,9 @@ function Sign() {
             <FontAwesomeIcon icon={faEnvelope} className={styles.iEmail} />
             <input
               type="password"
-              name="password"
+              name="senha"
               placeholder="Senha"
-              value={formData.password}
+              value={formData.senha}
               onChange={handleInputChange}
               autoComplete="current-password"
               required
@@ -106,22 +130,13 @@ function Sign() {
             <FontAwesomeIcon icon={faEnvelope} className={styles.iEmail} />
             <input
               type="password"
-              name="password"
+              name="senha"
               placeholder="Senha"
-              value={formData.password}
+              value={formData.senha}
               onChange={handleInputChange}
               required
             />
             <FontAwesomeIcon icon={faLock} className={styles.iPassword} />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirmar senha"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-            />
-            <FontAwesomeIcon icon={faLock} className={styles.iPassword} /><br /><br />
             <button type="submit">Criar conta</button>
           </form>
         )}

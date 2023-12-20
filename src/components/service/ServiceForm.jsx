@@ -1,25 +1,38 @@
-// react
 import { useState } from "react";
 import PropTypes from "prop-types";
+import axios from "axios"; // Importe o axios para fazer solicitações HTTP
 
-// components
 import Input from "../form/Input";
 import SubmitButton from "../form/SubmitButton";
-
-// css
 import styles from "../project/ProjectForm.module.css";
 
 export default function ServiceForm({ handleSubmit, projectData, btnText }) {
-  function submit(event) {
-    event.preventDefault();
-    projectData.services.push(service);
-    handleSubmit(projectData);
-  }
+  const [service, setService] = useState({
+    name: "",
+    cost: "",
+    description: "",
+  });
 
-  const [service, setService] = useState({});
-  function handleChange(event) {
+  const submit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:5000/services", service);
+      console.log("Resposta do backend:", response.data);
+
+      // Limpa os campos do formulário após a submissão
+      setService({ name: "", cost: "", description: "" });
+
+      // Chama a função handleSubmit passando o projeto atualizado, se necessário
+      handleSubmit(projectData);
+    } catch (error) {
+      console.error("Erro ao adicionar serviço:", error);
+    }
+  };
+
+  const handleChange = (event) => {
     setService({ ...service, [event.target.name]: event.target.value });
-  }
+  };
 
   return (
     <form onSubmit={submit} className={styles.form}>
@@ -28,21 +41,21 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
         text="Nome do serviço"
         name="name"
         handleOnChange={handleChange}
-        value={service.name ? service.name : ""}
+        value={service.name}
       />
       <Input
         type="text"
         text="Custos do serviço"
         name="cost"
         handleOnChange={handleChange}
-        value={service.cost ? service.cost : ""}
+        value={service.cost}
       />
       <Input
         type="text"
         text="Descrição do serviço"
         name="description"
         handleOnChange={handleChange}
-        value={service.description ? service.description : ""}
+        value={service.description}
       />
       <SubmitButton text={btnText} />
     </form>
@@ -54,6 +67,7 @@ ServiceForm.propTypes = {
   projectData: PropTypes.object.isRequired,
   btnText: PropTypes.string,
 };
+
 ServiceForm.defaultProps = {
   btnText: "Adicionar serviço",
 };

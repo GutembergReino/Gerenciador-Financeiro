@@ -43,40 +43,47 @@ export default function Project() {
     setShowServiceForm(!showServiceForm);
   }
 
-  function createService(project) {
-    setMessage("");
+function createService(project) {
+  setMessage("");
 
-    const lastService = project.services?.at(-1); // Trate o caso em que services é undefined
-    if (lastService) {
-      lastService.id = v4();
+  const lastService = project.services?.at(-1); // Trate o caso em que services é undefined
+  if (lastService) {
+    lastService.id = v4();
 
-      const newCost = parseFloat(project.cost || 0) + parseFloat(lastService.cost || 0);
+    const newCost = parseFloat(project.cost || 0) + parseFloat(lastService.cost || 0);
 
-      if (newCost > parseFloat(project.budget || 0)) {
-        setMessage("Acima do orçamento, verifique o custo do serviço!");
-        setMessageType("error");
-        project.services.pop();
-        return false;
-      }
-
-      project.cost = newCost;
+    if (newCost > parseFloat(project.budget || 0)) {
+      setMessage("Acima do orçamento, verifique o custo do serviço!");
+      setMessageType("error");
+      project.services.pop();
+      return false;
     }
 
-    fetch(`http://localhost:5000/projects/${project.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(project),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setShowServiceForm(false);
-        setMessage("Serviço criado com sucesso!");
-        setMessageType("success");
-      })
-      .catch((err) => console.error(err));
+    project.cost = newCost;
   }
+
+  fetch('http://localhost:5000/projects/:id', {
+    method: 'PATCH',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(project),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro na solicitação');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setShowServiceForm(false);
+      setMessage("Serviço criado com sucesso!");
+      setMessageType("success");
+    })
+    .catch(error => {
+      console.error('Erro na solicitação:', error);
+    });
+}
 
   function removeService(id, cost) {
     setMessage("");

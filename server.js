@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 const connection = mysql2.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'gnrifpe',
   database: 'project_management',
 });
 
@@ -29,7 +29,7 @@ connection.connect((err) => {
 });
 
 app.post('/projects', (req, res) => {
-  const { name, budget, category_id } = req.body;
+  const { name, budget, category_id, project_services } = req.body;
 
   if (!name || !budget || !category_id) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
@@ -42,10 +42,27 @@ app.post('/projects', (req, res) => {
       console.error('Erro ao criar projeto:', error);
       res.status(500).json({ error: 'Erro ao criar projeto' });
     } else {
-      res.json({ message: 'Projeto criado com sucesso' });
+      const projectId = results.insertId; // Obtém o ID do projeto recém-criado
+
+      // Se houver serviços, adiciona-os à tabela de serviços vinculados ao projeto
+      if (project_services && project_services.length > 0) {
+        const serviceValues = project_services.map(service => [projectId, service.name, service.cost, service.description]);
+
+        connection.query('INSERT INTO project_services (project_id, name, cost, description) VALUES ?', [serviceValues], (error, serviceResults) => {
+          if (error) {
+            console.error('Erro ao adicionar serviços:', error);
+            res.status(500).json({ error: 'Erro ao adicionar serviços ao projeto' });
+          } else {
+            res.json({ message: 'Projeto e serviços criados com sucesso' });
+          }
+        });
+      } else {
+        res.json({ message: 'Projeto criado com sucesso' });
+      }
     }
   });
 });
+
 
 app.get('/projects', (req, res) => {
   connection.query('SELECT * FROM projects', (error, results) => {
@@ -86,13 +103,59 @@ app.get('/categories', (req, res) => {
   });
 });
 
-app.get('/users', (req, res) => {
-  connection.query('SELECT * FROM users', (error, results) => {
+app.get('/project_services', (req, res) => {
+  connection.query('SELECT * FROM project_services', (error, results) => {
     if (error) {
-      console.error('Erro ao obter usuários:', error);
-      res.status(500).json({ error: 'Erro ao obter usuários' });
+      console.error('Erro ao obter serviços:', error);
+      res.status(500).json({ error: 'Erro ao obter serviços' });
     } else {
       res.json(results);
+    }
+  });
+});
+
+app.post('/project_services', (req, res) => {
+  const { name, cost, description } = req.body;
+
+  if (!name || !cost || !description) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes para o serviço' });
+  }
+
+  const service = { name, cost, description };
+
+  connection.query('INSERT INTO project_services SET ?', service, (error, results) => {
+    if (error) {
+      console.error('Erro ao criar serviço:', error);
+      res.status(500).json({ error: 'Erro ao criar serviço' });
+    } else {
+      res.json({ message: 'Serviço criado com sucesso' });
+    }
+  });
+});
+
+app.get('/users', (req, res) => {
+  const { email, senha } = req.query;
+
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
+
+  connection.query('SELECT * FROM users WHERE email = ?', [email], (error, results) => {
+    if (error) {
+      console.error('Erro ao realizar login:', error);
+      return res.status(500).json({ error: 'Erro ao realizar login', details: error.message });
+    }
+
+    if (results.length > 0) {
+      const user = results[0];
+      // Agora, verifique a senha
+      if (user.senha === senha) {
+        res.json({ message: 'Login bem-sucedido' });
+      } else {
+        res.status(401).json({ error: 'Credenciais inválidas' });
+      }
+    } else {
+      res.status(401).json({ error: 'Credenciais inválidas' });
     }
   });
 });
@@ -166,6 +229,41 @@ app.get('/categories/:id', (req, res) => {
       } else {
         res.status(404).json({ error: 'Categoria não encontrada' });
       }
+    }
+  });
+});
+
+app.post('/project_services', (req, res) => {
+  const { name, cost, description } = req.body;
+
+  // Verifique se todos os campos necessários estão presentes
+  if (!name || !cost || !description) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
+
+  // Crie um objeto representando o serviço
+  const service = { name, cost, description };
+
+  // Execute a query para inserir o serviço no banco de dados
+  connection.query('INSERT INTO project_services SET ?', service, (error, results) => {
+    if (error) {
+      console.error('Erro ao criar serviço:', error);
+      return res.status(500).json({ error: 'Erro ao criar serviço' });
+    }
+
+    res.json({ message: 'Serviço criado com sucesso', serviceId: results.insertId });
+  });
+});
+
+app.get('/projects/:id', (req, res) => {
+  const projectId = req.params.id;
+
+  connection.query('SELECT * FROM project_services WHERE id_project = ?', [projectId], (error, results) => {
+    if (error) {
+      console.error('Erro ao obter serviços do projeto:', error);
+      res.status(500).json({ error: 'Erro ao obter serviços do projeto' });
+    } else {
+      res.json(results);
     }
   });
 });
