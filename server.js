@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 const connection = mysql2.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'gnrifpe',
+  password: '123',
   database: 'project_management',
 });
 
@@ -29,7 +29,7 @@ connection.connect((err) => {
 });
 
 app.post('/projects', (req, res) => {
-  const { name, budget, category_id, project_services } = req.body;
+  const { name, budget, category_id, services } = req.body;
 
   if (!name || !budget || !category_id) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
@@ -42,13 +42,12 @@ app.post('/projects', (req, res) => {
       console.error('Erro ao criar projeto:', error);
       res.status(500).json({ error: 'Erro ao criar projeto' });
     } else {
-      const projectId = results.insertId; // Obtém o ID do projeto recém-criado
+      const project_id = results.insertId;
 
-      // Se houver serviços, adiciona-os à tabela de serviços vinculados ao projeto
-      if (project_services && project_services.length > 0) {
-        const serviceValues = project_services.map(service => [projectId, service.name, service.cost, service.description]);
+      if (services && services.length > 0) {
+        const serviceValues = services.map(service => [project_id, service.name, service.cost, service.description]);
 
-        connection.query('INSERT INTO project_services (project_id, name, cost, description) VALUES ?', [serviceValues], (error, serviceResults) => {
+        connection.query('INSERT INTO services (project_id, name, cost, description) VALUES ?', [serviceValues], (error, serviceResults) => {
           if (error) {
             console.error('Erro ao adicionar serviços:', error);
             res.status(500).json({ error: 'Erro ao adicionar serviços ao projeto' });
@@ -63,6 +62,27 @@ app.post('/projects', (req, res) => {
   });
 });
 
+// Adicionar a coluna project_id à tabela services
+connection.query('ALTER TABLE services ADD COLUMN project_id INT, ADD CONSTRAINT fk_project_id FOREIGN KEY (project_id) REFERENCES projects(id)', (error, results) => {
+  if (error) {
+    console.error('Erro ao adicionar coluna project_id à tabela services:', error);
+  } else {
+    console.log('Coluna project_id adicionada com sucesso à tabela services');
+  }
+});
+
+app.get('/projects/:id/services', (req, res) => {
+  const project_id = req.params.id;
+
+  connection.query('SELECT * FROM services WHERE project_id = ?', [project_id], (error, results) => {
+    if (error) {
+      console.error('Erro ao obter serviços do projeto:', error);
+      res.status(500).json({ error: 'Erro ao obter serviços do projeto' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 
 app.get('/projects', (req, res) => {
   connection.query('SELECT * FROM projects', (error, results) => {
@@ -76,9 +96,9 @@ app.get('/projects', (req, res) => {
 });
 
 app.get('/projects/:id', (req, res) => {
-  const projectId = req.params.id;
+  const project_id = req.params.id;
 
-  connection.query('SELECT * FROM projects WHERE id = ?', [projectId], (error, results) => {
+  connection.query('SELECT * FROM projects WHERE id = ?', [project_id], (error, results) => {
     if (error) {
       console.error('Erro ao obter detalhes do projeto:', error);
       res.status(500).json({ error: 'Erro ao obter detalhes do projeto' });
@@ -103,8 +123,8 @@ app.get('/categories', (req, res) => {
   });
 });
 
-app.get('/project_services', (req, res) => {
-  connection.query('SELECT * FROM project_services', (error, results) => {
+app.get('/services', (req, res) => {
+  connection.query('SELECT * FROM services', (error, results) => {
     if (error) {
       console.error('Erro ao obter serviços:', error);
       res.status(500).json({ error: 'Erro ao obter serviços' });
@@ -114,7 +134,7 @@ app.get('/project_services', (req, res) => {
   });
 });
 
-app.post('/project_services', (req, res) => {
+app.post('/services', (req, res) => {
   const { name, cost, description } = req.body;
 
   if (!name || !cost || !description) {
@@ -123,7 +143,7 @@ app.post('/project_services', (req, res) => {
 
   const service = { name, cost, description };
 
-  connection.query('INSERT INTO project_services SET ?', service, (error, results) => {
+  connection.query('INSERT INTO services SET ?', service, (error, results) => {
     if (error) {
       console.error('Erro ao criar serviço:', error);
       res.status(500).json({ error: 'Erro ao criar serviço' });
@@ -184,20 +204,27 @@ app.post('/users', (req, res) => {
 });
 
 app.delete('/projects/:id', (req, res) => {
-  const projectId = req.params.id;
+  const project_id = req.params.id;
 
-  connection.query('DELETE FROM projects WHERE id = ?', [projectId], (error, results) => {
+  connection.query('DELETE FROM services WHERE project_id = ?', [project_id], (error, deleteResults) => {
     if (error) {
-      console.error('Erro ao excluir projeto:', error);
-      res.status(500).json({ error: 'Erro ao excluir projeto' });
-    } else {
-      res.json({ message: 'Projeto excluído com sucesso' });
+      console.error('Erro ao excluir serviços associados ao projeto:', error);
+      return res.status(500).json({ error: 'Erro ao excluir serviços associados ao projeto' });
     }
+
+    connection.query('DELETE FROM projects WHERE id = ?', [project_id], (error, results) => {
+      if (error) {
+        console.error('Erro ao excluir projeto:', error);
+        res.status(500).json({ error: 'Erro ao excluir projeto' });
+      } else {
+        res.json({ message: 'Projeto e serviços associados excluídos com sucesso' });
+      }
+    });
   });
 });
 
 app.put('/projects/:id', (req, res) => {
-  const projectId = req.params.id;
+  const project_id = req.params.id;
   const { name, budget, category_id } = req.body;
 
   if (!name || !budget || !category_id) {
@@ -206,7 +233,7 @@ app.put('/projects/:id', (req, res) => {
 
   const updatedProject = { name, budget, category_id };
 
-  connection.query('UPDATE projects SET ? WHERE id = ?', [updatedProject, projectId], (error, results) => {
+  connection.query('UPDATE projects SET ? WHERE id = ?', [updatedProject, project_id], (error, results) => {
     if (error) {
       console.error('Erro ao atualizar projeto:', error);
       res.status(500).json({ error: 'Erro ao atualizar projeto' });
@@ -233,7 +260,7 @@ app.get('/categories/:id', (req, res) => {
   });
 });
 
-app.post('/project_services', (req, res) => {
+app.post('/services', (req, res) => {
   const { name, cost, description } = req.body;
 
   // Verifique se todos os campos necessários estão presentes
@@ -245,25 +272,152 @@ app.post('/project_services', (req, res) => {
   const service = { name, cost, description };
 
   // Execute a query para inserir o serviço no banco de dados
-  connection.query('INSERT INTO project_services SET ?', service, (error, results) => {
+  connection.query('INSERT INTO services SET ?', service, (error, results) => {
     if (error) {
       console.error('Erro ao criar serviço:', error);
       return res.status(500).json({ error: 'Erro ao criar serviço' });
     }
 
-    res.json({ message: 'Serviço criado com sucesso', serviceId: results.insertId });
+    res.json({ message: 'Serviço criado com sucesso', id: results.insertId });
   });
 });
 
 app.get('/projects/:id', (req, res) => {
-  const projectId = req.params.id;
+  const project_id = req.params.id;
 
-  connection.query('SELECT * FROM project_services WHERE id_project = ?', [projectId], (error, results) => {
+  connection.query('SELECT * FROM services WHERE id_project = ?', [project_id], (error, results) => {
     if (error) {
       console.error('Erro ao obter serviços do projeto:', error);
       res.status(500).json({ error: 'Erro ao obter serviços do projeto' });
     } else {
       res.json(results);
     }
+  });
+});
+
+app.get('/projects/:id/services', (req, res) => {
+  const project_id = req.params.id;
+
+  connection.query('SELECT * FROM services WHERE project_id = ?', [project_id], (error, results) => {
+    if (error) {
+      console.error('Erro ao obter serviços do projeto:', error);
+      res.status(500).json({ error: 'Erro ao obter serviços do projeto' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+app.post('/projects/:id/services', (req, res) => {
+  const project_id = req.params.id;
+  const { name, cost, description } = req.body;
+
+  // Verifique se todos os campos necessários estão presentes
+  if (!name || !cost || !description) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
+
+  // Crie um objeto representando o serviço
+  const service = { project_id: project_id, name, cost, description };
+
+  // Execute a query para obter o orçamento do projeto
+  connection.query('SELECT budget FROM projects WHERE id = ?', [project_id], (error, results) => {
+    if (error) {
+      console.error('Erro ao obter o orçamento do projeto:', error);
+      return res.status(500).json({ error: 'Erro ao obter o orçamento do projeto' });
+    }
+
+    const projectBudget = results[0].budget;
+    
+    // Execute a query para obter a soma dos custos dos serviços associados ao projeto
+    connection.query('SELECT SUM(cost) AS totalCost FROM services WHERE project_id = ?', [project_id], (error, costResults) => {
+      if (error) {
+        console.error('Erro ao obter a soma dos custos dos serviços:', error);
+        return res.status(500).json({ error: 'Erro ao obter a soma dos custos dos serviços' });
+      }
+
+      const totalCost = costResults[0].totalCost || 0;
+
+      // Verifique se a soma dos custos dos serviços mais o novo custo excede o orçamento
+      if (totalCost + Number(cost) > projectBudget) {
+        return res.status(400).json({ error: 'A soma dos custos dos serviços não pode ser maior que o orçamento do projeto' });
+      }
+
+      // Execute a query para inserir o serviço no banco de dados
+      connection.query('INSERT INTO services SET ?', service, (error, insertResults) => {
+        if (error) {
+          console.error('Erro ao criar serviço:', error);
+          return res.status(500).json({ error: 'Erro ao criar serviço' });
+        }
+
+        const id = insertResults.insertId;
+        console.log(`Serviço criado com sucesso. ID do serviço: ${id}`);
+
+        // Exiba os detalhes do serviço salvo no banco de dados
+        connection.query('SELECT * FROM services WHERE id = ?', [id], (error, serviceResults) => {
+          if (error) {
+            console.error('Erro ao obter detalhes do serviço:', error);
+            return res.status(500).json({ error: 'Erro ao obter detalhes do serviço' });
+          }
+
+          console.log('Detalhes do serviço:', serviceResults[0]);
+
+          res.json({ message: 'Serviço criado com sucesso', id });
+        });
+      });
+    });
+  });
+});
+
+app.delete('/projects/:project_id/services/:id', (req, res) => {
+  const project_id = req.params.project_id;
+  const id = req.params.id;
+
+  // Execute a query para obter o orçamento do projeto
+  connection.query('SELECT budget FROM projects WHERE id = ?', [project_id], (error, results) => {
+    if (error) {
+      console.error('Erro ao obter o orçamento do projeto:', error);
+      return res.status(500).json({ error: 'Erro ao obter o orçamento do projeto' });
+    }
+
+    const projectBudget = results[0].budget;
+
+    // Execute a query para obter a soma dos custos dos serviços associados ao projeto
+    connection.query('SELECT SUM(cost) AS totalCost FROM services WHERE project_id = ?', [project_id], (error, costResults) => {
+      if (error) {
+        console.error('Erro ao obter a soma dos custos dos serviços:', error);
+        return res.status(500).json({ error: 'Erro ao obter a soma dos custos dos serviços' });
+      }
+
+      const totalCost = costResults[0].totalCost || 0;
+
+      // Execute a query para obter o custo do serviço a ser excluído
+      connection.query('SELECT cost FROM services WHERE id = ?', [id], (error, serviceCostResults) => {
+        if (error) {
+          console.error('Erro ao obter o custo do serviço:', error);
+          return res.status(500).json({ error: 'Erro ao obter o custo do serviço' });
+        }
+
+        const serviceCost = serviceCostResults[0].cost || 0;
+
+        // Verifique se a exclusão do serviço não faz com que a soma dos custos dos serviços seja menor que zero
+        if (totalCost - serviceCost < 0) {
+          return res.status(400).json({ error: 'Exclusão do serviço resultaria em uma soma de custos menor que zero' });
+        }
+
+        // Execute a query para excluir o serviço do banco de dados
+        connection.query('DELETE FROM services WHERE id = ?', [id], (error, deleteResults) => {
+          if (error) {
+            console.error('Erro ao excluir serviço:', error);
+            return res.status(500).json({ error: 'Erro ao excluir serviço' });
+          }
+
+          console.log(`Serviço excluído com sucesso. ID do serviço: ${id}`);
+
+          res.json({ message: 'Serviço excluído com sucesso', id });
+        });
+      });
+    });
   });
 });

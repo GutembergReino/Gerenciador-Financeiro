@@ -1,6 +1,4 @@
-// react
 import PropTypes from "prop-types";
-// css
 import styles from "../project/ProjectCard.module.css";
 import { BsPencil, BsFillTrashFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -41,12 +39,13 @@ export default function ServiceCard({
 }
 
 ServiceCard.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   name: PropTypes.string,
   cost: PropTypes.string,
   description: PropTypes.string,
   handleRemove: PropTypes.func.isRequired,
 };
+
 ServiceCard.defaultProps = {
   name: "Nome do serviço",
   cost: "Custo do serviço",

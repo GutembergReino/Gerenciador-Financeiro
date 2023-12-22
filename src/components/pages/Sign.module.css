@@ -20,7 +20,7 @@ body {
   background-color: whitesmoke;
   padding: 1em;
   width: 100%;
-  max-width: 450px; /* Limitando a largura máxima */
+  max-width: 450px; 
   height: 500px;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ form {
   margin-top: 1em;
   transition: .5s;
   width: 100%;
-  max-width: 350px; /* Limitando a largura máxima */
+  max-width: 350px; 
   height: 400px;
 }
 
@@ -119,13 +119,12 @@ i {
   top: 190px;
 }
 
-/* Adicionando Media Queries para ajustar estilos em diferentes larguras de tela */
 @media screen and (min-width: 600px) {
   .container {
-    margin: 2em auto; /* Centralizando o container em telas maiores que 600px */
+    margin: 2em auto; 
   }
 
   #signup {
-    left: 50%; /* Posicionando o #signup no meio em telas maiores que 600px */
+    left: 50%; 
   }
 }

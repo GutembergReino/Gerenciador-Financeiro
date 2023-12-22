@@ -39,7 +39,7 @@ function ProjectCard({ project, handleRemove }) {
       <h4>{name}</h4>
       <p>
         <span>Orcamento: </span>{" "}
-        {Number(budget).toLocaleString("pt-BR", {
+        {parseFloat(budget).toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         })}

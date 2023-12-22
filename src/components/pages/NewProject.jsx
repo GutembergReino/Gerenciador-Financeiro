@@ -11,8 +11,8 @@ export default function NewProject() {
 
   function createProject(project) {
 
-    project.cost = 0.0;
     project.services = [];
+    project.cost = 0.0;
 
     fetch("http://localhost:5000/projects", {
       method: "POST",

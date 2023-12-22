@@ -3,65 +3,48 @@ h2 {
 }
 
 .project_details {
-  /* position */
   padding: 2em;
-  margin-left: -30em;
 }
 
 .project_details h1,
 .project_details h2,
 .project_details p {
-  /* position */
   margin-bottom: 0.5em;
 }
 
 .project_details h1 {
-  /* position */
   padding: 0.4em;
-  /* color */
   color: var(--B);
 }
 
 .project_details span {
-  /* text */
   font-weight: 1000;
 }
 
 .details_container,
 .service_form_container {
-  /* position */
   margin-bottom: 1.2em;
   padding-bottom: 1.2em;  
-  /* display */
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  /* border */
   border-bottom: 1px solid var(--G2);
 }
 
 .btn {
-  /* size */
   max-height: 40px;
-  /* position */
   padding: 0.5em 1em;
-  /* text */
   text-decoration: none;
-  /* border */
   border: none;
-  /* color */
   background-color: darkcyan;
   color: #fff;
-  /* misc */
   cursor: pointer;
   transition: color 0.5s;
 }
 .btn:hover {
-  /* color */
   color: var(--Y);
 }
 
 .project_info {
-  /* size */
   width: 100%;
 }
