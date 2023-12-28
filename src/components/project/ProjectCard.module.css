@@ -1,32 +1,23 @@
 .project_card {
-  /* size */
   width: 25%;
   height: fit-content;
-  /* position */
   margin: 0.5%;
   padding: 1em;
-  /* border */
   border: 2px solid darkgray;
   border-radius: 5px;
 }
 
 .project_card h4 {
-  /* position */
   margin-bottom: 1em;
   padding: 1em;
-  /* text */
   font-size: 1.3em;
-  /* color */
   color: var(--B);
 }
 
 .project_card p {
-  /* size */
   width: 100%;
   height: fit-content;
-  /* position */
   margin-top: 1em;
-  /* color */
   color: var(--G2);
 }
 .project_card p span {
@@ -34,82 +25,62 @@
 }
 
 .category_text {
-  /* display */
   display: flex;
   align-items: center;
 }
 
 .category_text span {
-  /* size */
   width: 12px;
   height: 12px;
-  /* position */
   margin-right: 5px;
-  /* display */
   display: block;
-  /* border */
   border-radius: 50%;
-  /* color */
   background-color: #ccc;
 }
 
 .category_text .infrastructure {
-  /* color */
   background-color: #ffaebc;
 }
 .category_text .development {
-  /* color */
   background-color: #a0e7e5;
 }
 .category_text .design {
-  /* color */
   background-color: #b4f8c8;
 }
 .category_text .management {
-  /* color */
   background-color: #fbe7c6;
 }
 
 .project_card_actions {
-  /* position */
   margin-top: 2em;
-  /* display */
   display: flex;
   align-items: center;
 }
 
 .project_card_actions a,
 .project_card_actions button {
-  /* position */
   margin-right: 1em;
   padding: 0.6em 1em;
-  /* display */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* text */
   font-size: 0.9em;
   text-decoration: none;
-  /* border */
   border: none;
   border: 1px solid var(--B);
   border-radius: 10px;
-  /* color */
   background-color: #fff;
   color: var(--B);
-  /* misc */
   cursor: pointer;
   transition: color 0.8s, background-color 0.3s;
 }
 
 .project_card_actions a:hover,
 .project_card_actions button:hover {
-  /* color */
   background-color: darkcyan;
   color: var(--Y);
 }
 
 .project_card_actions svg {
-  /* position */
   margin-right: 0.5em;
 }

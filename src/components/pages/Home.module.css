@@ -18,18 +18,13 @@
   font-size: 3.5em;
 }
 .home_container h1 span {
-  /* position */
   padding: 0 0.2em;
-  /* text */
   font-size: 1em;
-  /* color */
   background-color: darkcyan;
   color: var(--Y);
 }
 .home_container p {
-  /* position */
   margin-bottom: 1.5em;
-  /* color */
   color: black;
 }
 

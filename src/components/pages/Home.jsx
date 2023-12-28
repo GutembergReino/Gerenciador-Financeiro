@@ -1,8 +1,6 @@
-// components
 import LinkButton from "../form/LinkButton";
 import Navbar from "../layout/Navbar";
 
-// css
 import styles from "./Home.module.css";
 
 export default function Home() {

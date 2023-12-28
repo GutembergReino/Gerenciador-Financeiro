@@ -7,7 +7,9 @@ import Projects from "./components/pages/Projects";
 import Sign from "./components/pages/Sign";
 import NewProject from "./components/pages/NewProject";
 import Project from "./components/pages/Project";
-import Alertas from "./components/pages/Alertas";
+import AlertsPage from "./components/pages/AlertsPage";
+import NewCategory from "./components/pages/NewCategory";
+import Categories from "./components/pages/Categories";
 
 import Container from "./components/layout/Container";
 
@@ -23,7 +25,9 @@ function App() {
               <Route path="/projects" element={<Projects />} />
               <Route path="/newproject" element={<NewProject />} />
               <Route path="/project/:id" element={<Project />} />
-              <Route path="/alertas" element={<Alertas />} />
+              <Route path="/newcategories" element={<NewCategory />} />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/alertas" element={<AlertsPage />} />
             </Routes>
           </Container>
         </ErrorBoundary>

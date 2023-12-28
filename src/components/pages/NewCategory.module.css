@@ -1,0 +1,29 @@
+.new{
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .new img{
+    padding: auto;
+    margin: 4em 5em 0 5em;
+    height: 30em;
+  }
+  
+  .newproject_container {
+    width: 400px;
+    height: 35em;
+    margin: 0 8em 1em 0;
+    padding: 3em;
+    background-color: darkcyan;
+    border-radius: 15px;
+    margin-top: 1em;
+  }
+  .newproject_container h1 {
+    font-size: x-large;  
+    margin-top: -1em;
+  
+  }
+  .newproject_container p {
+    color: var(--B);
+  }
+  

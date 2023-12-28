@@ -1,4 +1,4 @@
-// css
+
 import styles from "./Loader.module.css";
 import loading from "../../img/loading.svg";
 

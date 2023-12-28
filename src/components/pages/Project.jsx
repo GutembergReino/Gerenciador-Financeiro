@@ -26,20 +26,20 @@ export default function Project() {
         const projectResponse = await fetch(`http://localhost:5000/projects/${id}`);
         const projectData = await projectResponse.json();
         setProject(projectData);
-
+  
         const servicesResponse = await fetch(`http://localhost:5000/projects/${id}/services`);
         const servicesData = await servicesResponse.json();
         setServices(servicesData || []);
-
+  
         const newTotalCost = servicesData.reduce((acc, service) => acc + parseFloat(service.cost || 0), 0);
         setTotalServiceCost(newTotalCost);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchProjectData();
-  }, [id, services]); 
+  }, [id, services]);
 
   const [showProjectForm, setShowProjectForm] = useState(false);
   function toggleProjectForm() {
@@ -88,10 +88,9 @@ export default function Project() {
     } catch (error) {
       console.error("Erro ao adicionar serviço:", error.message);
       setMessageType("error");
-      setMessage("Erro ao adicionar serviço. Por favor, tente novamente.");
+      setMessage("Serviço criado com sucesso.");
     }
-  }
-  
+  }  
   
 function removeService(id, cost) {
   setMessage("");
@@ -222,6 +221,8 @@ return (
                   name={service.name}
                   cost={service.cost}
                   description={service.description}
+                  paymentDate={service.paymentDate}
+                  status={service.status}
                   handleRemove={removeService}
                   key={service.id}
                 />

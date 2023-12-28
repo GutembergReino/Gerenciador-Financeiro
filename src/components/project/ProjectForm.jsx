@@ -9,7 +9,7 @@ import SubmitButton from "../form/SubmitButton";
 import styles from "./ProjectForm.module.css";
 
 export default function ProjectForm({ handleSubmit, projectData, btnText }) {
-  const navigate = useNavigate(); // Inicialize o hook useNavigate
+  const navigate = useNavigate(); 
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
@@ -69,8 +69,6 @@ export default function ProjectForm({ handleSubmit, projectData, btnText }) {
 
       const successResponse = await response.json();
       console.log('Projeto criado com sucesso:', successResponse);
-
-      // Redirecione para a página "/projects"
       navigate("/projects");
 
     } catch (error) {
@@ -90,8 +88,6 @@ export default function ProjectForm({ handleSubmit, projectData, btnText }) {
         .then((resp) => resp.json())
         .then((data) => {
           handleSubmit(data);
-
-          // Redirecione para a página "/projects" após a edição
           navigate("/projects");
         })
         .catch((err) => console.error(err));
@@ -112,7 +108,7 @@ export default function ProjectForm({ handleSubmit, projectData, btnText }) {
         text="Orçamento"
         name="budget"
         handleOnChange={handleChange}
-        value={project.budget || 0}
+        value={parseFloat(project.budget) || 0}
       />
       <Select
         name="category_id"

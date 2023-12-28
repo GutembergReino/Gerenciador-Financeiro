@@ -17,6 +17,9 @@ export default function Navbar() {
           <li className={styles.item}>
             <Link to="/projects">Projetos</Link>
           </li>
+          <li className={styles.item}>
+            <Link to="/categories">Categorias</Link>
+          </li>
           <li className={styles.itemS}>
             <Link to="/">Sair</Link>
           </li>

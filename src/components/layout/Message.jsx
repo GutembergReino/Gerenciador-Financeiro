@@ -1,7 +1,4 @@
-// react
 import { useState, useEffect } from "react";
-
-// css
 import styles from "./Message.module.css";
 
 export default function Message({ type, msg }) {

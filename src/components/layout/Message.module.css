@@ -1,26 +1,21 @@
 .message {
-  /* size */
   width: 100%;
   height: fit-content;
-  /* position */
   margin: 0 auto;
   margin-bottom: 2em;
   padding: 1em;
   text-align: center;
-  /* border */
   border: 1px solid #000;
   border-radius: 5px;
 }
 
 .success {
-  /* color */
   color: #155724;
   background-color: #d4edda;
   border-color: #c3e6cb;
 }
 
 .error {
-  /* color */
   color: #721c24;
   background-color: #f8d7da;
   border-color: #f5c6cb;

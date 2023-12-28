@@ -10,7 +10,7 @@ function Sign() {
   const [formData, setFormData] = useState({
     email: '',
     senha: '',
-  }); // Remova o campo 'confirmPassword'
+  });
 
   const navigate = useNavigate();
 
@@ -42,7 +42,6 @@ function Sign() {
           const userData = response.data;
   
           if (Array.isArray(userData) && userData.length > 0) {
-            // Email ou senha incorretos, notificar o usuário
             alert('Email ou senha incorretos. Por favor, tente novamente.');
           } else {
             console.log('Login bem-sucedido');
@@ -52,27 +51,24 @@ function Sign() {
           console.log('Login falhou');
           console.log(response);
   
-          // Outro erro, notificar o usuário de forma genérica
-          alert('Ocorreu um erro durante o login. Por favor, tente novamente mais tarde.');
         }
       } else if (formType === 'signup') {
-        // Enviar dados dinâmicos do formulário
         const response = await axios.post('http://localhost:5000/users', formData, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
-  
+        
         if (response.status === 200) {
           console.log('Registro bem-sucedido');
           navigate('/home');
         } else {
           console.log('Registro falhou');
+          alert('Email ou senha incorreta.');
           console.log(response);
         }
       }
     } catch (error) {
-      alert('Ocorreu um erro durante o login. Por favor, tente novamente mais tarde.');
       console.error('Erro durante o processamento:', error);
       console.error(error.response);
     }

@@ -1,7 +1,4 @@
-// react
 import PropTypes from "prop-types";
-
-// css
 import styles from "./Select.module.css";
 
 export default function Select({ text, name, options, handleOnChange, value }) {

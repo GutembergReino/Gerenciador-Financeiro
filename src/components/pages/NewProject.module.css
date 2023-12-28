@@ -10,10 +10,8 @@
 }
 
 .newproject_container {
-  /* size */
   width: 400px;
   height: 35em;
-  /* position */
   margin: 0 8em 1em 0;
   padding: 3em;
   background-color: darkcyan;
@@ -22,12 +20,9 @@
 }
 .newproject_container h1 {
   font-size: x-large;
-
-  /* position */
   margin-top: -1em;
 
 }
 .newproject_container p {
-  /* color */
   color: var(--B);
 }

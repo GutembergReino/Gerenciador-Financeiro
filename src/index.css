@@ -1,16 +1,12 @@
 *,
 *::before,
 *::after {
-  /* position */
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* text */
   font-size: 16px;
   font-family: "Open Sans", sans-serif;
   text-decoration: none;
-
-  /* prevent drag and select */
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -19,7 +15,6 @@
 }
 
 :root {
-  /* colors */
   --Y: #ffbb33;
   --B: #222;
   --G: #7b7b7b;
@@ -29,9 +24,7 @@
 html,
 body,
 #root {
-  /* size */
   height: 100%;
-  /* color */
   background-color: #efefef;
 }
 
@@ -40,9 +33,7 @@ h1 {
 }
 
 .App {
-  /* size */
   height: 100vh;
-  /* display */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
