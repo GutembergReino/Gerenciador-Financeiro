@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql2 = require('mysql2');
 const cors = require('cors');
+const bcryptjs = require('bcryptjs');
 const { format } = require('date-fns');
 
 const getStatus = (paymentDate) => {
@@ -189,14 +190,14 @@ app.post('/services', (req, res) => {
   });
 });
 
-app.get('/users', (req, res) => {
+app.get('/users', async (req, res) => {
   const { email, senha } = req.query;
 
   if (!email || !senha) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
   }
 
-  connection.query('SELECT * FROM users WHERE email = ?', [email], (error, results) => {
+  connection.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
     if (error) {
       console.error('Erro ao realizar login:', error);
       return res.status(500).json({ error: 'Erro ao realizar login', details: error.message });
@@ -204,7 +205,9 @@ app.get('/users', (req, res) => {
 
     if (results.length > 0) {
       const user = results[0];
-      if (user.senha === senha) {
+      const isPasswordValid = await bcryptjs.compare(senha, user.senha);
+
+      if (isPasswordValid) {
         res.json({ message: 'Login bem-sucedido' });
       } else {
         res.status(401).json({ error: 'Credenciais inválidas' });
@@ -224,13 +227,21 @@ app.post('/users', (req, res) => {
   if (!email || !senha) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
   }
-  const user = { email, senha };
-  connection.query('INSERT INTO users SET ?', user, (error, results) => {
-    if (error) {
-      console.error('Erro ao criar usuário:', error);
-      return res.status(500).json({ error: 'Erro ao criar usuário', details: error.message });
+  bcryptjs.hash(senha, 10, (hashError, hashedPassword) => {
+    if (hashError) {
+      console.error('Erro ao criar hash da senha:', hashError);
+      return res.status(500).json({ error: 'Erro ao criar hash da senha' });
     }
-    res.json({ message: 'Usuário criado com sucesso' });
+
+    const user = { email, senha: hashedPassword };
+
+    connection.query('INSERT INTO users SET ?', user, (error, results) => {
+      if (error) {
+        console.error('Erro ao criar usuário:', error);
+        return res.status(500).json({ error: 'Erro ao criar usuário', details: error.message });
+      }
+      res.json({ message: 'Usuário criado com sucesso' });
+    });
   });
 });
 
@@ -282,22 +293,6 @@ app.get('/categories/:id', (req, res) => {
         res.status(404).json({ error: 'Categoria não encontrada' });
       }
     }
-  });
-});
-
-app.post('/services', (req, res) => {
-  const { name, cost, description } = req.body;
-  if (!name || !cost || !description) {
-    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
-  }
-  const service = { name, cost, description };
-  connection.query('INSERT INTO services SET ?', service, (error, results) => {
-    if (error) {
-      console.error('Erro ao criar serviço:', error);
-      return res.status(500).json({ error: 'Erro ao criar serviço' });
-    }
-
-    res.json({ message: 'Serviço criado com sucesso', id: results.insertId });
   });
 });
 

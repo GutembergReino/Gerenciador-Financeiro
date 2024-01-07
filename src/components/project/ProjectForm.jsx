@@ -69,7 +69,7 @@ export default function ProjectForm({ handleSubmit, projectData, btnText }) {
 
       const successResponse = await response.json();
       console.log('Projeto criado com sucesso:', successResponse);
-      navigate("/projects");
+      navigate("/projects", { state: { message: "projeto criado com sucesso"} });
 
     } catch (error) {
       console.error('Error creating project:', error.message);
@@ -88,7 +88,7 @@ export default function ProjectForm({ handleSubmit, projectData, btnText }) {
         .then((resp) => resp.json())
         .then((data) => {
           handleSubmit(data);
-          navigate("/projects");
+          navigate("/projects", { state: { message: "Projeto editado com sucesso" } });
         })
         .catch((err) => console.error(err));
     }

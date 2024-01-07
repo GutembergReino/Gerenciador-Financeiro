@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import Input from "../form/Input";
 import SubmitButton from "../form/SubmitButton";
+import Message from "../layout/Message"; 
 import styles from "../project/ProjectForm.module.css";
 
 export default function ServiceForm({ handleSubmit, projectData, btnText }) {
@@ -10,7 +11,7 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
     name: "",
     cost: "",
     description: "",
-    paymentDate: "", 
+    paymentDate: "",
   });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
@@ -18,11 +19,21 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
   const submit = async (event) => {
     event.preventDefault();
 
-    const newCost = parseFloat(projectData.cost || 0) + parseFloat(service.cost || 0);
+    const newCost =
+      parseFloat(projectData.cost || 0) + parseFloat(service.cost || 0);
 
     if (newCost > parseFloat(projectData.budget || 0)) {
-      setMessage("Erro: A soma dos custos dos serviços não pode ser maior que o orçamento do projeto");
+      setMessage(
+        "A soma dos custos dos serviços não pode ser maior que o orçamento do projeto"
+      );
       setMessageType("error");
+      setService((prevService) => ({
+        ...prevService,
+        name: "",
+        cost: "",
+        description: "",
+        paymentDate: "",
+      }));
       return;
     }
 
@@ -48,9 +59,21 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
 
       handleSubmit(projectData);
     } catch (error) {
-      console.error("Erro ao adicionar serviço:", error.response?.data || error.message);
-      setMessage("Erro ao adicionar serviço. Consulte o console para mais detalhes.");
+      console.error(
+        "Erro ao adicionar serviço:",
+        error.response?.data || error.message
+      );
+      setMessage(
+      );
       setMessageType("error");
+
+      setService((prevService) => ({
+        ...prevService,
+        name: "",
+        cost: "",
+        description: "",
+        paymentDate: "",
+      }));
     }
   };
 
@@ -60,7 +83,7 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
 
   return (
     <div>
-      {message && <div className={messageType === "error" ? styles.error : styles.success}>{message}</div>}
+      {message && <Message type={messageType} msg={message} />}
       <form onSubmit={submit} className={styles.form}>
         <Input
           type="text"
@@ -93,7 +116,8 @@ export default function ServiceForm({ handleSubmit, projectData, btnText }) {
           value={service.paymentDate}
           required
         />
-        <SubmitButton text={btnText} /><br />
+        <SubmitButton text={btnText} />
+        <br />
       </form>
     </div>
   );
