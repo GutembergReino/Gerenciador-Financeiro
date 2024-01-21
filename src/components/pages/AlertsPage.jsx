@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import Navbar from '../layout/Navbar';
+import Navbar from '../Navbar';
 import Message from '../layout/Message';
 import styles from './AlertsPage.module.css';
 

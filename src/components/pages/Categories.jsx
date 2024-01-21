@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../layout/Navbar";
+import Navbar from "../Navbar";
 import Message from "../layout/Message"; 
 import styles from "./Categories.module.css";
 

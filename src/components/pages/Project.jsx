@@ -7,7 +7,7 @@ import ProjectForm from "../project/ProjectForm";
 import ServiceForm from "../service/ServiceForm";
 import ServiceCard from "../service/ServiceCard";
 import styles from "./Project.module.css";
-import Navbar from "../layout/Navbar";
+import Navbar from "../Navbar";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 

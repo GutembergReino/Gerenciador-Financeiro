@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CategoryForm from "../categories/CategoryForm";
 import styles from "./NewCategory.module.css";
-import Navbar from "../layout/Navbar";
+import Navbar from "../Navbar";
 import Message from "../layout/Message";
 
 export default function NewCategory() {

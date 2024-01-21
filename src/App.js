@@ -15,11 +15,15 @@ import Container from "./components/layout/Container";
 
 function App() {
   return (
+    
     <div className="App">
+      
       <BrowserRouter>
         <ErrorBoundary>
           <Container customClass="min_height container_app">
+            
             <Routes>
+              
               <Route path="/" element={<Sign />} />
               <Route path="/home" element={<Home />} />
               <Route path="/projects" element={<Projects />} />

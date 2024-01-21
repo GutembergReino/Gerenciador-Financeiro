@@ -1,9 +1,11 @@
 .project_container {
-  padding: 1em;
+  display: grid;
+  place-items: center;
+  height: 100vh; 
 }
 
 .title_container {
   margin: 2em;
-  display: flex;
+  display: grid;
   justify-content: space-between;
 }

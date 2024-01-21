@@ -8,7 +8,7 @@ import ProjectCard from "../project/ProjectCard";
 import Loader from "../layout/Loader";
 
 import styles from "./Projects.module.css";
-import Navbar from "../layout/Navbar";
+import Navbar from "../Navbar";
 
 export default function Projects() {
   const location = useLocation();

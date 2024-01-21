@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ProjectForm from "../project/ProjectForm";
 
 import styles from "./NewProject.module.css";
-import savings from "../../img/savings.png"
-import Navbar from "../layout/Navbar";
+
+import Navbar from "../Navbar";
 
 export default function NewProject() {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ export default function NewProject() {
         <p>Crie seus orçamentos para depois adicionar seus serviços</p>
         <ProjectForm handleSubmit={createProject} btnText="Criar projeto" />
       </div>
-      <img src={savings} alt="Savings" draggable={false} />
+     
       </div>
     </div>
   );
