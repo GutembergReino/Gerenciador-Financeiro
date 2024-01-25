@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 const connection = mysql2.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'root',
+  password: 'gnrifpe',
   database: 'project_management',
 });
 
