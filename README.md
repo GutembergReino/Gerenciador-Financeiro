@@ -1,4 +1,4 @@
-caso queira testar nosso projeto, crie um banco de dados no mysql workbench com o seguinte comando: -- Criar o banco de dados
+caso queira testar nosso projeto, crie um banco de dados no mysql workbench com o seguinte comando:
 
 CREATE DATABASE IF NOT EXISTS project_management;
 
