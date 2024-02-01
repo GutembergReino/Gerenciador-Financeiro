@@ -1,4 +1,8 @@
-caso queira testar nosso projeto, crie um banco de dados no mysql workbench com o seguinte comando:
+REQUESITOS: vscode, mysql workbench e nodejs
+
+ALTERAÇÃO: 
+
+Para testar nosso projeto, crie um banco de dados no mysql workbench com o seguinte comando:
 
 CREATE DATABASE IF NOT EXISTS project_management;
 
