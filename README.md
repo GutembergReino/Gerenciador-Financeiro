@@ -1,6 +1,6 @@
 REQUESITOS: vscode, mysql workbench e nodejs
-
-ALTERAÇÃO: 
+DEPENDENCIAS: (npm install) + (npm install express body-parser mysql2 cors bcryptjs date-fns)
+ALTERAÇÃO: altere na linha 31 do arquivo para a senha do seu root
 
 Para testar nosso projeto, crie um banco de dados no mysql workbench com o seguinte comando:
 
